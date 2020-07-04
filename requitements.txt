@@ -1,0 +1,4 @@
+python version= 3.6 but i have installed the latest version of python
+
+django version =2.2
+
