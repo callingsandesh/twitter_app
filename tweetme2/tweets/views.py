@@ -22,16 +22,20 @@ def home_view(request , *args , **kwargs):
     return render(request, "pages/home.html" ,context={},status=200)
 
 def tweet_create_view(request,*args,**kwargs):
-    print("ajax",request.is_ajax())
+    
+    #print("ajax",request.is_ajax())
     form=TweetForm(request.POST or None)
     #print('post data is :',request.POST)
-
     next_url=request.POST.get("next") or None
     #print("next_url",next_url)
     if form.is_valid():
         obj=form.save(commit=False)
         #do other form related logic
         obj.save()
+
+        if request.is_ajax():
+            return JsonResponse(obj.serialize(),status=201) #201 == created items
+
         if next_url != None and is_safe_url(next_url,ALLOWED_HOSTS):
             return redirect(next_url)
 
@@ -41,20 +45,21 @@ def tweet_create_view(request,*args,**kwargs):
     return render(request,'components/form.html',context={"form":form})
 
 def tweet_list_view(request,*args,**kwargs):
-    qs=Tweet.objects.all()
-
-    tweet_lists=[{"Id":x.id,"content":x.content,"likes":random.randint(0,100)} for x in qs]
-    data={
-        "isUser":False,
-        "response": tweet_lists
-    }
-    return JsonResponse(data)
-def tweet_detail_view(request ,tweet_id,*args,**kwargs):
     """
     REST API VIEW
     Consume by JavaScript or Swift/Java/iOS/Android
     return json data
     """
+    qs=Tweet.objects.all()
+    tweet_lists=[x.serialize() for x in qs]
+    data={
+        "isUser":False,
+        "response": tweet_lists
+    }
+    return JsonResponse(data)
+
+
+def tweet_detail_view(request ,tweet_id,*args,**kwargs):
     data={
         "id":tweet_id,
         #"content":obj.content,
