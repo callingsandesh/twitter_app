@@ -21,6 +21,7 @@ def home_view(request , *args , **kwargs):
     #return HttpResponse("<h1>hello world<h1>")
     return render(request, "pages/home.html" ,context={},status=200)
 
+
 def tweet_create_view(request,*args,**kwargs):
     user=request.user
     print(user)
@@ -37,7 +38,7 @@ def tweet_create_view(request,*args,**kwargs):
     if form.is_valid():
         obj=form.save(commit=False)
         #do other form related logic
-        obj.user=request.user or None #Annon User
+        obj.user=user
         obj.save()
 
         if request.is_ajax():
