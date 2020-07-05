@@ -22,16 +22,22 @@ def home_view(request , *args , **kwargs):
     return render(request, "pages/home.html" ,context={},status=200)
 
 def tweet_create_view(request,*args,**kwargs):
+    user=request.user
+    print(user)
+    if not request.user.is_authenticated:
+        user=None
+        if request.is_ajax():
+            return JsonResponse({},status=401)
+        return redirect(settings.LOGIN_URL)
     
-    
-    #print("ajax",request.is_ajax())
     form=TweetForm(request.POST or None)
-    #print('post data is :',request.POST)
+    
     next_url=request.POST.get("next") or None
-    #print("next_url",next_url)
+    
     if form.is_valid():
         obj=form.save(commit=False)
         #do other form related logic
+        obj.user=request.user or None #Annon User
         obj.save()
 
         if request.is_ajax():

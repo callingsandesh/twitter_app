@@ -105,9 +105,11 @@
                     alert(" error Occured.Please try again")
                 }
                 //console.log(contentErrorMsg)
-            }else if(xhr.status ===500){
-                alert("There is server error,plz try again")
+            }else if(xhr.status ===401){
+                alert("You must login!!")
 
+            }else if(xhr.status === 500){
+                alert("There is server error,plz try again")
             }
 
         }
