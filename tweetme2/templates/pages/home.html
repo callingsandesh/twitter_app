@@ -109,6 +109,10 @@
                 alert("You must login to the app!!")
                 window.location.href="/login"
 
+            }else if(xhr.status ===403){
+                alert("You must login to the app!!")
+                window.location.href="/login"
+
             }else if(xhr.status === 500){
                 alert("There is server error,plz try again")
             }

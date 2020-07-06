@@ -4,8 +4,10 @@ from .serializers import TweetSerializer
 from django.utils.http import is_safe_url
 from django.conf import settings
 
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,authentication_classes ,permission_classes
+from rest_framework.permissions import IsAuthenticated 
 
 from django.http import  HttpResponse,Http404 , JsonResponse
 
@@ -24,6 +26,8 @@ def home_view(request , *args , **kwargs):
     return render(request, "pages/home.html" ,context={},status=200)
 
 @api_view(['POST'])  #http method the client ==POST
+#@authentication_classes([SessionAuthentication , MycustomAuth])
+@permission_classes([IsAuthenticated])
 def tweet_create_view(request,*args,**kwargs):
     #data=request.POST or None
     serializer =TweetSerializer(data=request.POST )
