@@ -1,6 +1,6 @@
 from django.shortcuts import render , redirect
 import random
-
+from .serializers import TweetSerializer
 from django.utils.http import is_safe_url
 from django.conf import settings
 
@@ -21,7 +21,21 @@ def home_view(request , *args , **kwargs):
     #return HttpResponse("<h1>hello world<h1>")
     return render(request, "pages/home.html" ,context={},status=200)
 
+
 def tweet_create_view(request,*args,**kwargs):
+    #data=request.POST or None
+    serializer =TweetSerializer(data=request.POST or None)
+    if serializer.is_valid():
+        obj=serializer.save(user=request.user )
+        return JsonResponse(serializer.data,status=201)
+        
+        
+
+
+    return JsonResponse({},status=400)
+
+
+def tweet_create_view_pure_django(request,*args,**kwargs):
     user=request.user
     print(user)
     if not request.user.is_authenticated:
