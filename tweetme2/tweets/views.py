@@ -1,6 +1,9 @@
 from django.shortcuts import render , redirect
 import random
-from .serializers import TweetSerializer , TweetActionSerializer
+from .serializers import (
+    TweetSerializer , 
+    TweetActionSerializer,
+    TweetCreateSerializer)
 from django.utils.http import is_safe_url
 from django.conf import settings
 
@@ -30,7 +33,7 @@ def home_view(request , *args , **kwargs):
 @permission_classes([IsAuthenticated])
 def tweet_create_view(request,*args,**kwargs):
     #data=request.POST or None
-    serializer =TweetSerializer(data=request.POST )
+    serializer =TweetCreateSerializer(data=request.POST )
     if serializer.is_valid(raise_exception=True):
         serializer.save(user=request.user )
         return Response(serializer.data,status=201)
@@ -79,12 +82,15 @@ def tweet_action_view(request,*args,**kwargs):
         data=serializer.validated_data
         tweet_id=data.get("id")
         action=data.get("action")
+        contents=data.get("content")
+        print(contents)
 
         qs=Tweet.objects.filter(id=tweet_id)
         if not qs.exists():
             return Response({}, status=404)
     
         obj=qs.first()
+
         if action == "like":
             obj.likes.add(request.user)
             serializer=TweetSerializer(obj)
@@ -93,8 +99,13 @@ def tweet_action_view(request,*args,**kwargs):
             obj.likes.remove(request.user)
 
         elif action =="retweet":
-            #todo
-            pass
+            
+            new_tweet =Tweet.objects.create(user=request.user , 
+                    parent=obj,
+                    content=contents
+                    )
+            serializer=TweetSerializer(new_tweet)
+            return Response(serializer.data, status=200)
     
     return Response({}, status=200)
 
