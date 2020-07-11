@@ -7,7 +7,7 @@ function loadTweets(callback){
         
   const xhr=new XMLHttpRequest()
   const method ='GET'  //"POST"
-  const url="/api/tweets"
+  const url="http://127.0.0.1:8000/api/tweets/"
   const responseType="json"
   xhr.responseType = responseType
   xhr.open(method,url)
@@ -19,6 +19,7 @@ function loadTweets(callback){
 
   //console.log(listedItems)
 }
+
 xhr.send()
 
 }
@@ -26,13 +27,16 @@ xhr.send()
 
 function App() {
   const [tweets, setTweets]=useState([])
-
+   
   
   
   useEffect(()=>{
     const myCallback = (response,status)=>{
+      if(status === 200){
+        setTweets(response)
+      }
     
-    setTweets(response)
+    
     }
     loadTweets(myCallback)
    
