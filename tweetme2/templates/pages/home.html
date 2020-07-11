@@ -163,7 +163,7 @@
         
         const xhr=new XMLHttpRequest()
         const method ='GET'  //"POST"
-        const url="/tweets"
+        const url="/api/tweets"
         const responseType="json"
         xhr.responseType = responseType
         xhr.open(method,url)
@@ -174,7 +174,7 @@
         const listedItems=serverResponse
         let finalTweetStr=""
         var i;
-        for(i=0;i<listedItems.length;i++){
+        for(i=0; i<listedItems.length; i++){
             //console.log(i)
             //console.log(listedItems[i])
             var tweetObj=listedItems[i]
