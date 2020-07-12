@@ -1,29 +1,28 @@
 import React, {useEffect,useState} from 'react' 
 
+export function TweetComponent(props){
+  const textAreaRef = React.createRef()
+  const handleSubmit =(event)=>{
+    event.preventDefault()
+   
+    const newValue = textAreaRef.current.value
+    console.log(newValue)
+    textAreaRef.current.value=''
+  }
+  return <div className={props.classname}>
+    <div className='col-12 mb-3'>
+    <form onSubmit={handleSubmit}> 
+    <textarea ref={textAreaRef} required={true} className='form-control'>
 
-function loadTweets(callback){
-        
-    const xhr=new XMLHttpRequest()
-    const method ='GET'  //"POST"
-    const url="http://localhost:8000/api/tweets/"
-    const responseType="json"
-    xhr.responseType = responseType
-    xhr.open(method,url)
-   
-  
-    xhr.onload =function(){
-      callback(xhr.response, xhr.status)
-   
-  
-    //console.log(listedItems)
-  }
-  xhr.onerror = function(e){
-    console.log(e)
-    callback({"message":"The request was an error"},400)
-  }
-  xhr.send()
-  
-  }
+
+    </textarea>
+    <button type="submit" className='btn btn-primary my-3'>Tweet</button>
+  </form>
+  </div>
+  <TweetsList/>
+  </div>
+}
+ 
   
 export function TweetsList(props){
     
@@ -49,10 +48,34 @@ export function TweetsList(props){
       })
   }
 
+function loadTweets(callback){
+        
+    const xhr=new XMLHttpRequest()
+    const method ='GET'  //"POST"
+    const url="http://localhost:8000/api/tweets/"
+    const responseType="json"
+    xhr.responseType = responseType
+    xhr.open(method,url)
+   
+  
+    xhr.onload =function(){
+      callback(xhr.response, xhr.status)
+   
+  
+    //console.log(listedItems)
+  }
+  xhr.onerror = function(e){
+    console.log(e)
+    callback({"message":"The request was an error"},400)
+  }
+  xhr.send()
+  
+  }
+
 export function ActionBtn(props){
     const {tweet,action}=props
     const [likes,setLikes] = useState(tweet.likes ?tweet.likes :0)
-    const [userLike,setUserLike]=useState(false)
+    const [userLike,setUserLike]=useState(tweet.userLike === true ? true : false) 
     const className = props.className ? props.className : 'btn btn-outline-success btn-sm'
     const actionDisplay = action.display ? action.display :'Action'
     
