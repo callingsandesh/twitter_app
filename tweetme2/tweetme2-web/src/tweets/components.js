@@ -2,11 +2,19 @@ import React, {useEffect,useState} from 'react'
 
 export function TweetComponent(props){
   const textAreaRef = React.createRef()
+  const [newTweets , setNewTweets] =useState([])
   const handleSubmit =(event)=>{
     event.preventDefault()
    
     const newValue = textAreaRef.current.value
-    console.log(newValue)
+    let tempNewTweets = [...newTweets] //copy the newTweets
+    //change this to a server side call
+    tempNewTweets.unshift({    //unshift put it to the very begining whereas push sends it to the last
+      content:newValue,
+      likes:0,
+      id:12313
+    })
+    setNewTweets(tempNewTweets)
     textAreaRef.current.value=''
   }
   return <div className={props.classname}>
@@ -19,21 +27,30 @@ export function TweetComponent(props){
     <button type="submit" className='btn btn-primary my-3'>Tweet</button>
   </form>
   </div>
-  <TweetsList/>
+  <TweetsList newTweets={newTweets}/>
   </div>
 }
  
   
 export function TweetsList(props){
     
+      const [tweetsInit, setTweetsInit]=useState([])
       const [tweets, setTweets]=useState([])
-       
+      //setTweetsInit([...props.newTweets].concat(tweetsInit))
       
-      
+      useEffect(()=>{
+        const final=[...props.newTweets].concat(tweetsInit)
+        if (final.length !== tweets.length){
+          setTweets(final)
+        }
+        
+      },[props.newTweets,tweets, tweetsInit])
+
       useEffect(()=>{
         const myCallback = (response,status)=>{
           if(status === 200){
-            setTweets(response)
+            
+            setTweetsInit(response)
           }else{
             alert("Their was an error")
           }
@@ -42,7 +59,7 @@ export function TweetsList(props){
         }
         loadTweets(myCallback)
        
-      },[])
+      },[tweetsInit])
       return tweets.map((item, index)=>{
         return <Tweet tweet={item} className='my-5 py-5 border bg-white text-dark' key={`${index}-{item.id}`}/>
       })
